@@ -256,11 +256,19 @@
     }
     .dot.active{width:28px;background:var(--red)}
 
+    .banner-lightbox{position:fixed;inset:0;z-index:3000;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.88);backdrop-filter:blur(8px)}
+    .banner-lightbox.open{display:flex}
+    .banner-lightbox-dialog{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;width:min(1400px,96vw);max-height:94vh}
+    .banner-lightbox img{max-width:100%;max-height:82vh;object-fit:contain;border-radius:14px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+    .banner-lightbox-close{position:absolute;top:-18px;right:-18px;z-index:1;width:46px;height:46px;border:0;border-radius:50%;background:#fff;color:#111;font-size:30px;line-height:1;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+    .banner-lightbox-link{display:none;padding:11px 20px;border-radius:999px;background:var(--red);color:#fff;font-weight:900}
+    .banner-lightbox-link.visible{display:inline-flex}
+
     .quick-bar{
       width:min(1080px,92%);
       margin:22px auto 0;
       display:grid;
-      grid-template-columns:repeat(4,1fr);
+      grid-template-columns:repeat(3,1fr);
       gap:14px;
     }
     .quick-item{
@@ -592,11 +600,11 @@
 .buddy-chat-head span{font-size:13px;font-weight:700;opacity:.95}
 .buddy-status-dot{width:12px;height:12px;border-radius:50%;background:#39e56f;box-shadow:0 0 0 5px rgba(57,229,111,.16)}
 .buddy-messages{
-  height:250px;overflow:auto;padding:16px;display:flex;flex-direction:column;
+  height:390px;overflow:auto;padding:20px;display:flex;flex-direction:column;
   gap:10px;background:linear-gradient(180deg,#17171c,#0f0f13);
 }
 .buddy-message{
-  max-width:88%;padding:12px 14px;border-radius:16px;font-size:15px;
+  max-width:88%;padding:14px 16px;border-radius:16px;font-size:16px;
   font-weight:650;line-height:1.55;white-space:pre-line;
 }
 .buddy-message.bot{align-self:flex-start;background:#282830;color:#fff;border-bottom-left-radius:5px}
@@ -630,7 +638,8 @@
   .plan-card .price{font-size:41px !important}
   .plan-list li{font-size:16px !important}
   .quick-item strong{font-size:17px !important}
-  .buddy-messages{height:280px}
+  .buddy-messages{height:320px;padding:14px}
+  .buddy-message{font-size:15px}
 }
 
 
@@ -897,9 +906,10 @@ body{
     }
     .buddy-wrap{
       display:grid;
-      grid-template-columns:.9fr 1.1fr;
-      gap:34px;
+      grid-template-columns:.72fr 1.28fr;
+      gap:38px;
       align-items:center;
+      width:min(1380px,96%);
     }
     .buddy-figure{
       min-height:520px;
@@ -938,7 +948,7 @@ body{
     .buddy-copy{
       background:#fff;
       border-radius:24px;
-      padding:36px;
+      padding:40px;
       box-shadow:var(--shadow);
     }
     .buddy-copy h2{
@@ -1057,6 +1067,7 @@ body{
       }
       .plans-grid,.service-grid{grid-template-columns:1fr 1fr}
       .buddy-wrap,.contact-grid,.recommender-wrap{grid-template-columns:1fr}
+      .buddy-wrap{width:92%}
     }
 
     @media(max-width:700px){
@@ -1077,6 +1088,9 @@ body{
       .buddy-figure{min-height:420px}
       .buddy-figure img{max-height:390px}
       .buddy-points{grid-template-columns:1fr}
+      .buddy-copy{padding:24px 18px}
+      .banner-lightbox{padding:14px}
+      .banner-lightbox-close{top:8px;right:8px}
       section{padding:62px 0}
     }
   </style>
@@ -1128,9 +1142,19 @@ body{
   </div>
 </header>
 
+<div class="banner-lightbox" id="bannerLightbox" role="dialog" aria-modal="true" aria-label="Banner preview" aria-hidden="true">
+  <div class="banner-lightbox-dialog">
+    <button class="banner-lightbox-close" id="bannerLightboxClose" type="button" aria-label="Close preview">&times;</button>
+    <img id="bannerLightboxImage" src="" alt="">
+    <a class="banner-lightbox-link" id="bannerLightboxLink" href="#plans">View details</a>
+  </div>
+</div>
+
 <div class="quick-bar">
   <a class="quick-item" href="#plans"><strong>EPIK35+</strong><span>200GB · RM35</span></a>
   <a class="quick-item" href="#plans"><strong>EPIK50+</strong><span>500GB · RM50</span></a>
+  <a class="quick-item" href="#plans"><strong>EPIK Tahunan99</strong><span>RM99 / Tahun</span></a>
+  <a class="quick-item" href="#plans"><strong>EPIK Tahunan200</strong><span>RM200 / Tahun</span></a>
   <a class="quick-item" href="#services"><strong>MNP</strong><span data-i18n="quick_mnp">保留原号码</span></a>
   <a class="quick-item" href="#services"><strong>eSIM</strong><span data-i18n="quick_esim">快速开通</span></a>
 </div>
@@ -2032,6 +2056,10 @@ body{
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
   const slider = document.getElementById("slider");
+  const bannerLightbox = document.getElementById("bannerLightbox");
+  const bannerLightboxImage = document.getElementById("bannerLightboxImage");
+  const bannerLightboxLink = document.getElementById("bannerLightboxLink");
+  const bannerLightboxClose = document.getElementById("bannerLightboxClose");
   let slides = [], dots = [], current = 0, timer, startX = 0;
 
   function safeCmsLink(v){
@@ -2054,6 +2082,7 @@ body{
       slide.href=safeCmsLink(b.link_url); if(/^https:\/\//i.test(slide.href)) slide.target="_blank";
       slide.style.setProperty("--slide-bg",`url('${String(b.image_url).replace(/'/g,"%27")}')`);
       const img=document.createElement("img"); img.src=b.image_url; img.alt=b.alt_text||b.title||"TuneTalk promotion"; img.loading=index===0?"eager":"lazy";
+      img.addEventListener("click",event=>{event.preventDefault();event.stopPropagation();openBannerPreview(b)});
       slide.appendChild(img); slider.insertBefore(slide,prevBtn);
       const dot=document.createElement("button"); dot.className="dot"+(index===0?" active":""); dot.type="button"; dot.setAttribute("aria-label",`Banner ${index+1}`); dot.onclick=()=>{showSlide(index);restartSlider()}; dotsBox.appendChild(dot);
     });
@@ -2067,6 +2096,28 @@ body{
   }
   function next(){showSlide(current+1)} function prev(){showSlide(current-1)}
   function restartSlider(){clearInterval(timer);if(slides.length>1)timer=setInterval(next,5000)}
+  function pauseSlider(){clearInterval(timer)}
+  function openBannerPreview(banner){
+    pauseSlider();
+    bannerLightboxImage.src=banner.image_url;
+    bannerLightboxImage.alt=banner.alt_text||banner.title||"TuneTalk promotion";
+    const link=safeCmsLink(banner.link_url);
+    bannerLightboxLink.href=link;
+    bannerLightboxLink.classList.toggle("visible",Boolean(banner.link_url));
+    bannerLightboxLink.target=/^https:\/\//i.test(link)?"_blank":"";
+    bannerLightbox.classList.add("open");
+    bannerLightbox.setAttribute("aria-hidden","false");
+    document.body.style.overflow="hidden";
+    bannerLightboxClose.focus();
+  }
+  function closeBannerPreview(){
+    if(!bannerLightbox.classList.contains("open"))return;
+    bannerLightbox.classList.remove("open");
+    bannerLightbox.setAttribute("aria-hidden","true");
+    bannerLightboxImage.src="";
+    document.body.style.overflow="";
+    restartSlider();
+  }
   async function loadCmsBanners(){
     try{
       const r=await fetch(`${CMS_API}/api/public/banners`,{cache:"no-store"}); if(!r.ok)throw new Error("CMS unavailable");
@@ -2074,6 +2125,13 @@ body{
     }catch(e){ console.error("Banner CMS:",e); rebuildSlider([]); }
   }
   nextBtn.addEventListener("click",()=>{next();restartSlider()}); prevBtn.addEventListener("click",()=>{prev();restartSlider()});
+  slider.addEventListener("mouseenter",pauseSlider);
+  slider.addEventListener("mouseleave",()=>{if(!bannerLightbox.classList.contains("open"))restartSlider()});
+  slider.addEventListener("focusin",pauseSlider);
+  slider.addEventListener("focusout",()=>{if(!bannerLightbox.classList.contains("open"))restartSlider()});
+  bannerLightboxClose.addEventListener("click",closeBannerPreview);
+  bannerLightbox.addEventListener("click",event=>{if(event.target===bannerLightbox)closeBannerPreview()});
+  document.addEventListener("keydown",event=>{if(event.key==="Escape")closeBannerPreview()});
   slider.addEventListener("touchstart",e=>{startX=e.changedTouches[0].screenX},{passive:true});
   slider.addEventListener("touchend",e=>{const diff=e.changedTouches[0].screenX-startX;if(Math.abs(diff)>50){diff<0?next():prev();restartSlider()}},{passive:true});
   loadCmsBanners();
