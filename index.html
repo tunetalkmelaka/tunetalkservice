@@ -2051,7 +2051,10 @@ body{
   });
 
   // V8.3 FINAL: CMS-only Banner loader. GitHub contains no fixed carousel images.
-  const CMS_API = "https://tunetalkservice-cms-api.coyeeho8385.workers.dev";
+  // V8.3.1 FIX: use the public API through the same tunetalkservice.my domain.
+  // This keeps Banner and TT Buddy on the already-working Cloudflare /api/* route
+  // and avoids cross-origin/Workers.dev access problems in the browser.
+  const CMS_API = "";
   const dotsBox = document.getElementById("dots");
   const prevBtn = document.getElementById("prevBtn");
   const nextBtn = document.getElementById("nextBtn");
