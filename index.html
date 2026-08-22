@@ -1084,12 +1084,17 @@ body{
       .brand{min-width:135px}
       .brand img{width:185px;height:52px}
       .nav-links{top:70px}
-      .lang-switch{display:none}
+      .lang-switch{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  align-items:center;
+}
       .hero{padding-top:12px}
       .slider-shell{width:94%;border-radius:16px}
       .slider{
         aspect-ratio:1920/850;
-        min-height:0;
+        min-height:0;  
       }
       .slider-arrow{width:36px;height:36px}
       .quick-bar{grid-template-columns:repeat(2,1fr)}
