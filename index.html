@@ -1136,7 +1136,7 @@ body{
         <a href="#apn" data-i18n="nav_apn">APN 教学</a>
         <a href="#recommend" data-i18n="nav_recommend">配套推荐</a>
         <a href="#buddy" data-i18n="nav_buddy">TT Buddy</a>
-       <a href="/register">SIM 自助注册</a>
+       <a href="/register"id=“registerLink">SIM 自助注册</a>
         <a href="#contact" data-i18n="nav_contact">联系我们</a>
         <a class="nav-cta" target="_blank"
            href="https://wa.me/60105377777?text=你好，我想了解 TuneTalk 配套。">WhatsApp</a>
@@ -2355,6 +2355,18 @@ body{
     }
   };
 
+  const registerLink = document.getElementById('registerLink');
+
+if (registerLink) {
+  registerLink.addEventListener('click', function(e) {
+    e.preventDefault();
+
+    const lang = localStorage.getItem('tt_lang') || 'zh';
+
+    window.location.href = '/register?lang=' + lang;
+  });
+}
+  
 </script>
 
 </body>
