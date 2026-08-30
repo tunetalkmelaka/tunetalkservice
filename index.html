@@ -2361,7 +2361,7 @@ if (registerLink) {
   registerLink.addEventListener('click', function(e) {
     e.preventDefault();
 
-    const lang = localStorage.getItem('tt_lang') || 'zh';
+    const lang = localStorage.getItem('tt_language') || 'zh';
 
     window.location.href = '/register?lang=' + lang;
   });
