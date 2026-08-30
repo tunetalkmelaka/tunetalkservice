@@ -220,7 +220,7 @@
 <body>
 
   <header class="topbar">
-    <h1>Tune Talk SIM 自助注册教程</h1>
+   <h1 id="regTitle">Tune Talk SIM 自助注册教程</h1>
     <div class="en">TUNE TALK SIM SELF-REGISTRATION GUIDE</div>
     <div class="bm">PANDUAN PENDAFTARAN SIM TUNE TALK</div>
   </header>
@@ -230,17 +230,17 @@
   </div>
 
   <section class="intro">
-    <h2>SIM 注册 Step 1–24</h2>
+   <h2 id="stepTitle">SIM 注册 Step 1-24</h2>
 
-    <p>
+    <p id="introZh">
       请按照以下图片顺序完成 Tune Talk SIM 自助注册。
     </p>
 
-    <p>
+    <p id="introEn">
       Please follow the steps below to complete your Tune Talk SIM registration.
     </p>
 
-    <p>
+    <p id="introBm">
       Sila ikuti langkah di bawah untuk melengkapkan pendaftaran SIM Tune Talk.
     </p>
   </section>
@@ -359,7 +359,41 @@
     url.searchParams.set('lang', lang);
     window.location.href = url.toString();
 }
-    
+
+    const registerLang =
+    new URLSearchParams(window.location.search).get('lang') ||
+    localStorage.getItem('tt_lang') ||
+    'zh';
+
+document.documentElement.lang = registerLang;
+
+    function applyRegisterLanguage(lang) {
+    const zh = document.getElementById('introZh');
+    const en = document.getElementById('introEn');
+    const bm = document.getElementById('introBm');
+    const title = document.getElementById('regTitle');
+    const stepTitle = document.getElementById('stepTitle');
+
+    zh.style.display = 'none';
+    en.style.display = 'none';
+    bm.style.display = 'none';
+
+    if (lang === 'en') {
+        en.style.display = 'block';
+        title.textContent = 'Tune Talk SIM Self-Registration Guide';
+        stepTitle.textContent = 'SIM Registration Step 1-24';
+    } else if (lang === 'ms') {
+        bm.style.display = 'block';
+        title.textContent = 'Panduan Pendaftaran Sendiri SIM Tune Talk';
+        stepTitle.textContent = 'Pendaftaran SIM Langkah 1-24';
+    } else {
+        zh.style.display = 'block';
+        title.textContent = 'Tune Talk SIM 自助注册教程';
+        stepTitle.textContent = 'SIM 注册 Step 1-24';
+    }
+}
+
+applyRegisterLanguage(registerLang);
   </script>
 
 </body>
