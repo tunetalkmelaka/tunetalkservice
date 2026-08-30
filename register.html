@@ -317,6 +317,12 @@
     </div>
   </section>
 
+  <div class="register-lang" style="text-align:center;margin:25px 0;">
+  <button onclick="setRegisterLang('ms')">BM</button>
+  <button onclick="setRegisterLang('en')">EN</button>
+  <button onclick="setRegisterLang('zh')">中文</button>
+</div>
+  
   <footer>
     <strong>TuneTalk Service Malaysia</strong><br><br>
     Tune Talk SIM • eSIM • MNP • APN • Registration Guide
@@ -345,6 +351,15 @@
         closeImage();
       }
     });
+    
+    function setRegisterLang(lang) {
+    localStorage.setItem('tt_lang', lang);
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('lang', lang);
+    window.location.href = url.toString();
+}
+    
   </script>
 
 </body>
